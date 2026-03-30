@@ -1,1 +1,975 @@
+<!DOCTYPE html>
 
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PIRATEDROIDZ — Droid Core v3.0</title>
+<meta name="description" content="PIRATEDROIDZ — A Paradroid tribute. Board the GFS Anchovy and GFS Sardine. Override droids. Escape the fleet. 20 floors of retro mayhem.">
+<meta name="apple-itunes-app" content="app-id=YOURAPPID">
+<meta property="og:title" content="PIRATEDROIDZ">
+<meta property="og:description" content="Droid Core v3.0 — A Paradroid tribute for iOS">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=VT323&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cyan:   #00e5ff;
+    --magenta:#ff00cc;
+    --gold:   #ffcc00;
+    --purple: #7b00ff;
+    --dark:   #04030a;
+    --panel:  #0a0818;
+    --grid:   rgba(0,229,255,0.06);
+    --scanline: rgba(0,0,0,0.45);
+  }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+background: var(–dark);
+color: #cce8ef;
+font-family: ‘Share Tech Mono’, monospace;
+overflow-x: hidden;
+cursor: crosshair;
+}
+
+/* ── CRT scanlines overlay ── */
+body::before {
+content: ‘’;
+position: fixed; inset: 0;
+background: repeating-linear-gradient(
+0deg,
+transparent,
+transparent 2px,
+var(–scanline) 2px,
+var(–scanline) 4px
+);
+pointer-events: none;
+z-index: 9999;
+opacity: 0.18;
+}
+
+/* ── grid bg ── */
+body::after {
+content: ‘’;
+position: fixed; inset: 0;
+background-image:
+linear-gradient(var(–grid) 1px, transparent 1px),
+linear-gradient(90deg, var(–grid) 1px, transparent 1px);
+background-size: 40px 40px;
+pointer-events: none;
+z-index: 0;
+}
+
+/* ─────────── NAV ─────────── */
+nav {
+position: fixed; top: 0; left: 0; right: 0;
+z-index: 100;
+display: flex; align-items: center; justify-content: space-between;
+padding: 0 2rem;
+height: 52px;
+background: rgba(4,3,10,0.92);
+border-bottom: 1px solid rgba(0,229,255,0.18);
+backdrop-filter: blur(8px);
+}
+.nav-logo {
+font-family: ‘Orbitron’, sans-serif;
+font-weight: 900;
+font-size: 1rem;
+letter-spacing: 0.15em;
+color: var(–cyan);
+text-shadow: 0 0 12px var(–cyan);
+}
+.nav-logo span { color: var(–magenta); }
+nav ul {
+list-style: none;
+display: flex; gap: 2rem;
+}
+nav ul a {
+color: rgba(204,232,239,0.6);
+text-decoration: none;
+font-size: 0.75rem;
+letter-spacing: 0.12em;
+text-transform: uppercase;
+transition: color 0.2s;
+}
+nav ul a:hover { color: var(–cyan); }
+
+/* ─────────── HERO ─────────── */
+#hero {
+position: relative;
+min-height: 100vh;
+display: flex; flex-direction: column;
+align-items: center; justify-content: center;
+text-align: center;
+padding: 6rem 1.5rem 4rem;
+z-index: 1;
+overflow: hidden;
+}
+
+/* animated radar circle */
+#hero::before {
+content: ‘’;
+position: absolute;
+width: 600px; height: 600px;
+border-radius: 50%;
+border: 1px solid rgba(0,229,255,0.08);
+top: 50%; left: 50%;
+transform: translate(-50%, -50%);
+box-shadow:
+0 0 0 80px rgba(0,229,255,0.03),
+0 0 0 160px rgba(0,229,255,0.02),
+0 0 0 240px rgba(0,229,255,0.01);
+animation: pulse-ring 4s ease-out infinite;
+}
+
+@keyframes pulse-ring {
+0%   { opacity:1; transform: translate(-50%,-50%) scale(0.85); }
+100% { opacity:0; transform: translate(-50%,-50%) scale(1.3); }
+}
+
+.hero-tag {
+font-family: ‘VT323’, monospace;
+font-size: 1.1rem;
+letter-spacing: 0.3em;
+color: var(–magenta);
+text-transform: uppercase;
+margin-bottom: 1rem;
+animation: flicker 6s infinite;
+}
+
+@keyframes flicker {
+0%,95%,100% { opacity:1; }
+96% { opacity:0.4; }
+97% { opacity:1; }
+98% { opacity:0.2; }
+99% { opacity:1; }
+}
+
+.hero-title {
+font-family: ‘Orbitron’, sans-serif;
+font-weight: 900;
+font-size: clamp(3.5rem, 12vw, 8rem);
+line-height: 1;
+letter-spacing: -0.02em;
+color: #fff;
+text-shadow:
+0 0 40px rgba(0,229,255,0.6),
+0 0 80px rgba(0,229,255,0.3);
+animation: glitch-title 8s infinite;
+}
+.hero-title span {
+color: var(–cyan);
+display: block;
+text-shadow:
+0 0 40px var(–cyan),
+0 0 80px rgba(0,229,255,0.5);
+}
+
+@keyframes glitch-title {
+0%,94%,100% { clip-path: none; transform: none; }
+95% { clip-path: inset(30% 0 40% 0); transform: translateX(-4px); }
+96% { clip-path: inset(60% 0 10% 0); transform: translateX(4px); }
+97% { clip-path: none; transform: none; }
+}
+
+.hero-sub {
+margin-top: 1rem;
+font-size: 0.85rem;
+letter-spacing: 0.35em;
+color: rgba(204,232,239,0.5);
+text-transform: uppercase;
+}
+
+/* icon image */
+.hero-icon {
+margin: 2.5rem auto 0;
+width: 140px; height: 140px;
+border-radius: 28px;
+overflow: hidden;
+box-shadow:
+0 0 0 2px rgba(0,229,255,0.3),
+0 0 40px rgba(0,229,255,0.25),
+0 20px 60px rgba(0,0,0,0.8);
+animation: bob 3s ease-in-out infinite;
+}
+.hero-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+@keyframes bob {
+0%,100% { transform: translateY(0); }
+50%      { transform: translateY(-8px); }
+}
+
+.cta-row {
+margin-top: 2.5rem;
+display: flex; flex-wrap: wrap;
+gap: 1rem; justify-content: center;
+}
+
+.btn {
+display: inline-flex; align-items: center; gap: 0.5rem;
+padding: 0.85rem 2rem;
+font-family: ‘Orbitron’, sans-serif;
+font-size: 0.75rem;
+font-weight: 700;
+letter-spacing: 0.18em;
+text-transform: uppercase;
+text-decoration: none;
+border: none;
+border-radius: 4px;
+cursor: pointer;
+transition: all 0.2s;
+position: relative;
+overflow: hidden;
+}
+.btn::after {
+content: ‘’;
+position: absolute; inset: 0;
+background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+opacity: 0;
+transition: opacity 0.2s;
+}
+.btn:hover::after { opacity: 1; }
+
+.btn-primary {
+background: var(–cyan);
+color: var(–dark);
+box-shadow: 0 0 24px rgba(0,229,255,0.5), 0 4px 16px rgba(0,0,0,0.4);
+}
+.btn-primary:hover {
+box-shadow: 0 0 40px rgba(0,229,255,0.8), 0 4px 24px rgba(0,0,0,0.5);
+transform: translateY(-2px);
+}
+.btn-ghost {
+background: transparent;
+color: var(–cyan);
+border: 1px solid rgba(0,229,255,0.4);
+box-shadow: inset 0 0 0 0 var(–cyan);
+}
+.btn-ghost:hover {
+border-color: var(–cyan);
+box-shadow: 0 0 20px rgba(0,229,255,0.2);
+transform: translateY(-2px);
+}
+
+.scroll-hint {
+margin-top: 4rem;
+font-size: 0.65rem;
+letter-spacing: 0.3em;
+color: rgba(204,232,239,0.25);
+text-transform: uppercase;
+animation: scroll-blink 2s ease-in-out infinite;
+}
+@keyframes scroll-blink {
+0%,100% { opacity: 0.4; } 50% { opacity: 1; }
+}
+
+/* ─────────── SECTION BASE ─────────── */
+section {
+position: relative; z-index: 1;
+padding: 6rem 1.5rem;
+max-width: 1100px;
+margin: 0 auto;
+}
+
+.section-label {
+font-family: ‘VT323’, monospace;
+font-size: 1rem;
+letter-spacing: 0.4em;
+color: var(–magenta);
+text-transform: uppercase;
+margin-bottom: 0.6rem;
+}
+.section-title {
+font-family: ‘Orbitron’, sans-serif;
+font-weight: 900;
+font-size: clamp(1.8rem, 5vw, 3rem);
+color: #fff;
+line-height: 1.1;
+margin-bottom: 1.5rem;
+}
+.section-title em {
+font-style: normal;
+color: var(–cyan);
+}
+
+/* ─────────── SCREENSHOTS ─────────── */
+#screenshots {
+text-align: center;
+max-width: 100%;
+padding: 6rem 1.5rem;
+}
+
+.screens-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+gap: 1.5rem;
+margin-top: 3rem;
+max-width: 1000px;
+margin-left: auto; margin-right: auto;
+}
+
+.screen-card {
+position: relative;
+border-radius: 16px;
+overflow: hidden;
+border: 1px solid rgba(0,229,255,0.12);
+box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+transition: transform 0.3s, box-shadow 0.3s;
+aspect-ratio: 9/16;
+background: #0a0818;
+}
+.screen-card:hover {
+transform: translateY(-8px) scale(1.02);
+box-shadow: 0 16px 60px rgba(0,229,255,0.2), 0 8px 40px rgba(0,0,0,0.7);
+border-color: rgba(0,229,255,0.3);
+}
+.screen-card img {
+width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.screen-caption {
+position: absolute;
+bottom: 0; left: 0; right: 0;
+padding: 1rem 0.75rem 0.75rem;
+background: linear-gradient(transparent, rgba(4,3,10,0.95));
+font-size: 0.68rem;
+letter-spacing: 0.15em;
+color: var(–cyan);
+text-transform: uppercase;
+}
+
+/* ─────────── SHIPS ─────────── */
+#ships {
+max-width: 1100px;
+}
+
+.ships-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 2rem;
+margin-top: 3rem;
+}
+
+@media (max-width: 600px) {
+.ships-grid { grid-template-columns: 1fr; }
+nav ul { display: none; }
+}
+
+.ship-card {
+border: 1px solid rgba(0,229,255,0.15);
+border-radius: 12px;
+padding: 2rem;
+background: linear-gradient(135deg, rgba(10,8,24,0.9) 0%, rgba(20,5,30,0.9) 100%);
+position: relative;
+overflow: hidden;
+transition: border-color 0.3s;
+}
+.ship-card:hover { border-color: rgba(0,229,255,0.4); }
+
+.ship-card::before {
+content: ‘’;
+position: absolute;
+top: -1px; left: 0; right: 0;
+height: 2px;
+}
+.ship-anchovy::before {
+background: linear-gradient(90deg, transparent, var(–cyan), transparent);
+}
+.ship-sardine::before {
+background: linear-gradient(90deg, transparent, var(–magenta), transparent);
+}
+
+.ship-code {
+font-family: ‘VT323’, monospace;
+font-size: 0.9rem;
+letter-spacing: 0.3em;
+margin-bottom: 0.5rem;
+}
+.ship-anchovy .ship-code { color: var(–cyan); }
+.ship-sardine .ship-code { color: var(–magenta); }
+
+.ship-name {
+font-family: ‘Orbitron’, sans-serif;
+font-size: 1.5rem;
+font-weight: 900;
+color: #fff;
+margin-bottom: 1rem;
+}
+
+.ship-floors {
+display: inline-block;
+padding: 0.25rem 0.75rem;
+border-radius: 20px;
+font-size: 0.65rem;
+letter-spacing: 0.2em;
+text-transform: uppercase;
+margin-bottom: 1rem;
+font-family: ‘Orbitron’, sans-serif;
+font-weight: 700;
+}
+.ship-anchovy .ship-floors {
+background: rgba(0,229,255,0.12);
+color: var(–cyan);
+border: 1px solid rgba(0,229,255,0.3);
+}
+.ship-sardine .ship-floors {
+background: rgba(255,0,204,0.12);
+color: var(–magenta);
+border: 1px solid rgba(255,0,204,0.3);
+}
+
+.ship-desc {
+font-size: 0.82rem;
+line-height: 1.7;
+color: rgba(204,232,239,0.65);
+}
+
+.ship-feature-list {
+margin-top: 1rem;
+list-style: none;
+display: flex; flex-direction: column; gap: 0.4rem;
+}
+.ship-feature-list li {
+font-size: 0.75rem;
+color: rgba(204,232,239,0.5);
+display: flex; gap: 0.5rem;
+align-items: flex-start;
+}
+.ship-feature-list li::before {
+content: ‘▸’;
+flex-shrink: 0;
+margin-top: 0.05rem;
+}
+.ship-anchovy .ship-feature-list li::before { color: var(–cyan); }
+.ship-sardine .ship-feature-list li::before { color: var(–magenta); }
+
+/* ─────────── HOW TO PLAY ─────────── */
+#howtoplay {
+max-width: 1100px;
+}
+
+.rules-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+gap: 1.5rem;
+margin-top: 3rem;
+}
+
+.rule-card {
+padding: 1.5rem;
+border: 1px solid rgba(0,229,255,0.1);
+border-radius: 10px;
+background: rgba(10,8,24,0.6);
+transition: border-color 0.3s, background 0.3s;
+}
+.rule-card:hover {
+border-color: rgba(255,204,0,0.3);
+background: rgba(10,8,24,0.9);
+}
+
+.rule-icon {
+font-size: 2rem;
+margin-bottom: 0.75rem;
+display: block;
+filter: drop-shadow(0 0 8px rgba(255,204,0,0.5));
+}
+.rule-title {
+font-family: ‘Orbitron’, sans-serif;
+font-size: 0.7rem;
+font-weight: 700;
+letter-spacing: 0.15em;
+color: var(–gold);
+text-transform: uppercase;
+margin-bottom: 0.5rem;
+}
+.rule-desc {
+font-size: 0.8rem;
+line-height: 1.6;
+color: rgba(204,232,239,0.6);
+}
+
+/* ─────────── TERMINAL STRIP ─────────── */
+.terminal-strip {
+position: relative; z-index: 1;
+background: rgba(0,229,255,0.04);
+border-top: 1px solid rgba(0,229,255,0.1);
+border-bottom: 1px solid rgba(0,229,255,0.1);
+padding: 1.5rem 2rem;
+overflow: hidden;
+margin: 0;
+}
+.terminal-strip::before {
+content: ‘’;
+position: absolute; inset: 0;
+background: repeating-linear-gradient(
+90deg,
+transparent,
+transparent 60px,
+rgba(0,229,255,0.02) 60px,
+rgba(0,229,255,0.02) 61px
+);
+}
+.terminal-text {
+font-family: ‘VT323’, monospace;
+font-size: 1.1rem;
+color: var(–cyan);
+letter-spacing: 0.15em;
+white-space: nowrap;
+animation: marquee 22s linear infinite;
+display: inline-block;
+}
+@keyframes marquee {
+from { transform: translateX(100vw); }
+to   { transform: translateX(-100%); }
+}
+
+/* ─────────── PRIVACY / LEGAL ─────────── */
+#privacy {
+max-width: 800px;
+}
+
+.legal-box {
+border: 1px solid rgba(0,229,255,0.1);
+border-radius: 10px;
+padding: 2rem;
+background: rgba(10,8,24,0.6);
+margin-top: 2rem;
+}
+.legal-box h3 {
+font-family: ‘Orbitron’, sans-serif;
+font-size: 0.85rem;
+font-weight: 700;
+color: var(–cyan);
+letter-spacing: 0.15em;
+margin-bottom: 0.75rem;
+margin-top: 1.5rem;
+}
+.legal-box h3:first-child { margin-top: 0; }
+.legal-box p, .legal-box li {
+font-size: 0.82rem;
+line-height: 1.75;
+color: rgba(204,232,239,0.55);
+margin-bottom: 0.5rem;
+}
+.legal-box ul { padding-left: 1.2rem; }
+.legal-box a {
+color: var(–cyan);
+text-decoration: none;
+}
+.legal-box a:hover { text-decoration: underline; }
+
+/* ─────────── SUPPORT ─────────── */
+#support {
+max-width: 700px;
+text-align: center;
+}
+
+.support-box {
+display: flex; flex-direction: column; gap: 1rem;
+margin-top: 2rem;
+align-items: center;
+}
+
+.support-link {
+display: flex; align-items: center; gap: 1rem;
+padding: 1.25rem 2rem;
+width: 100%; max-width: 420px;
+border: 1px solid rgba(0,229,255,0.15);
+border-radius: 10px;
+background: rgba(10,8,24,0.6);
+color: rgba(204,232,239,0.7);
+text-decoration: none;
+font-size: 0.82rem;
+letter-spacing: 0.08em;
+transition: all 0.25s;
+}
+.support-link:hover {
+border-color: rgba(0,229,255,0.4);
+background: rgba(0,229,255,0.06);
+color: var(–cyan);
+transform: translateX(4px);
+}
+.support-link .link-icon {
+font-size: 1.3rem;
+flex-shrink: 0;
+}
+.support-link .link-label {
+font-family: ‘Orbitron’, sans-serif;
+font-size: 0.65rem;
+font-weight: 700;
+letter-spacing: 0.2em;
+display: block;
+color: var(–cyan);
+margin-bottom: 0.1rem;
+}
+
+/* ─────────── FOOTER ─────────── */
+footer {
+position: relative; z-index: 1;
+border-top: 1px solid rgba(0,229,255,0.1);
+padding: 3rem 2rem;
+text-align: center;
+}
+.footer-logo {
+font-family: ‘Orbitron’, sans-serif;
+font-weight: 900;
+font-size: 1.2rem;
+color: var(–cyan);
+letter-spacing: 0.2em;
+text-shadow: 0 0 20px rgba(0,229,255,0.4);
+margin-bottom: 0.5rem;
+}
+footer p {
+font-size: 0.72rem;
+color: rgba(204,232,239,0.25);
+letter-spacing: 0.12em;
+margin-top: 0.4rem;
+line-height: 1.8;
+}
+footer a { color: rgba(204,232,239,0.4); text-decoration: none; }
+footer a:hover { color: var(–cyan); }
+
+/* ─────────── DIVIDER ─────────── */
+.divider {
+position: relative; z-index: 1;
+width: 100%;
+height: 1px;
+background: linear-gradient(90deg, transparent, rgba(0,229,255,0.2), transparent);
+margin: 0;
+}
+
+/* ─────────── STAT ROW ─────────── */
+.stats-row {
+display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem;
+margin-top: 3rem;
+position: relative; z-index: 1;
+padding: 0 1.5rem;
+}
+.stat-item {
+text-align: center;
+}
+.stat-num {
+font-family: ‘Orbitron’, sans-serif;
+font-weight: 900;
+font-size: 2.5rem;
+color: var(–gold);
+text-shadow: 0 0 20px rgba(255,204,0,0.5);
+line-height: 1;
+}
+.stat-label {
+font-size: 0.65rem;
+letter-spacing: 0.25em;
+color: rgba(204,232,239,0.4);
+text-transform: uppercase;
+margin-top: 0.3rem;
+}
+
+/* ─────────── BADGE ─────────── */
+.app-store-badge {
+display: inline-flex; align-items: center; gap: 0.75rem;
+padding: 0.85rem 1.75rem;
+background: #000;
+border: 1px solid rgba(255,255,255,0.15);
+border-radius: 10px;
+text-decoration: none;
+color: #fff;
+transition: all 0.25s;
+margin-top: 0.5rem;
+}
+.app-store-badge:hover {
+background: #111;
+border-color: rgba(255,255,255,0.3);
+transform: translateY(-2px);
+box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+.badge-text small {
+display: block;
+font-size: 0.6rem;
+letter-spacing: 0.1em;
+opacity: 0.7;
+text-transform: uppercase;
+}
+.badge-text strong {
+display: block;
+font-family: ‘Orbitron’, sans-serif;
+font-size: 0.85rem;
+font-weight: 700;
+letter-spacing: 0.05em;
+}
+</style>
+
+</head>
+<body>
+
+<!-- NAV -->
+
+<nav>
+  <div class="nav-logo">PIRATE<span>DROIDZ</span></div>
+  <ul>
+    <li><a href="#ships">Ships</a></li>
+    <li><a href="#howtoplay">How to Play</a></li>
+    <li><a href="#privacy">Privacy</a></li>
+    <li><a href="#support">Support</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+
+<section id="hero">
+  <div class="hero-tag">▸ Droid Override Sequence Initiated ◂</div>
+  <h1 class="hero-title">
+    PIRATE<span>DROIDZ</span>
+  </h1>
+  <p class="hero-sub">Droid Core v3.0 &nbsp;·&nbsp; A Paradroid Tribute &nbsp;·&nbsp; iOS</p>
+
+  <div class="hero-icon">
+    <img src="icon.png" alt="PIRATEDROIDZ App Icon" onerror="this.parentElement.style.background='linear-gradient(135deg,#0a1628,#1a0830)';this.style.display='none'">
+  </div>
+
+  <div class="cta-row">
+    <a href="https://apps.apple.com/app/id6744275965" class="app-store-badge" target="_blank" rel="noopener">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+      <div class="badge-text">
+        <small>Download on the</small>
+        <strong>App Store</strong>
+      </div>
+    </a>
+    <a href="#howtoplay" class="btn btn-ghost">[ HOW TO PLAY ]</a>
+  </div>
+
+  <p class="scroll-hint">▼ &nbsp; SCROLL TO BOARD &nbsp; ▼</p>
+</section>
+
+<!-- STATS ROW -->
+
+<div class="stats-row">
+  <div class="stat-item">
+    <div class="stat-num">20</div>
+    <div class="stat-label">Floors</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">2</div>
+    <div class="stat-label">Ships</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">999</div>
+    <div class="stat-label">Max Droid ID</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">∞</div>
+    <div class="stat-label">Replayability</div>
+  </div>
+</div>
+
+<div class="divider" style="margin-top:4rem"></div>
+
+<!-- SCREENSHOTS -->
+
+<section id="screenshots" style="max-width:100%">
+  <div style="max-width:1100px;margin:0 auto">
+    <div class="section-label">▸ Mission Footage</div>
+    <h2 class="section-title">In-Game <em>Screenshots</em></h2>
+  </div>
+  <div class="screens-grid">
+    <div class="screen-card">
+      <img src="screenshots/floor4.png" alt="Floor 4 - GFS Anchovy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22533%22><rect fill=%22%230a0818%22 width=%22300%22 height=%22533%22/><text x=%2250%25%22 y=%2250%25%22 fill=%22%2300e5ff22%22 font-size=%2214%22 text-anchor=%22middle%22 font-family=%22monospace%22>GFS ANCHOVY</text></svg>'">
+      <div class="screen-caption">GFS Anchovy · Floor 4</div>
+    </div>
+    <div class="screen-card">
+      <img src="screenshots/floor_purple.png" alt="Upper floors - GFS Anchovy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22533%22><rect fill=%22%230a0818%22 width=%22300%22 height=%22533%22/><text x=%2250%25%22 y=%2250%25%22 fill=%22%237b00ff22%22 font-size=%2214%22 text-anchor=%22middle%22 font-family=%22monospace%22>UPPER FLOORS</text></svg>'">
+      <div class="screen-caption">GFS Anchovy · Upper Floors</div>
+    </div>
+    <div class="screen-card">
+      <img src="screenshots/sardine.png" alt="GFS Sardine" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22533%22><rect fill=%22%230a0818%22 width=%22300%22 height=%22533%22/><text x=%2250%25%22 y=%2250%25%22 fill=%22%23ff00cc22%22 font-size=%2214%22 text-anchor=%22middle%22 font-family=%22monospace%22>GFS SARDINE</text></svg>'">
+      <div class="screen-caption">GFS Sardine · Black Hole Floors</div>
+    </div>
+    <div class="screen-card">
+      <img src="screenshots/anchovy_top.png" alt="GFS Anchovy top view" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22533%22><rect fill=%22%230a0818%22 width=%22300%22 height=%22533%22/><text x=%2250%25%22 y=%2250%25%22 fill=%22%2300e5ff22%22 font-size=%2214%22 text-anchor=%22middle%22 font-family=%22monospace%22>TOP VIEW</text></svg>'">
+      <div class="screen-caption">GFS Anchovy · Escape Pod Deck</div>
+    </div>
+  </div>
+  <p style="margin-top:1.5rem;font-size:0.7rem;color:rgba(204,232,239,0.25);letter-spacing:0.15em;text-align:center">PLACE YOUR SCREENSHOTS IN A /screenshots/ FOLDER ALONGSIDE THIS FILE</p>
+</section>
+
+<div class="divider"></div>
+
+<!-- SHIPS -->
+
+<section id="ships">
+  <div class="section-label">▸ Fleet Registry</div>
+  <h2 class="section-title">Two Ships. <em>Twenty Floors.</em></h2>
+  <p style="font-size:0.85rem;color:rgba(204,232,239,0.5);line-height:1.8;max-width:600px">
+    Override hostile droids across two government fleet ships. Board the GFS Anchovy, fight your way up 10 floors, find the escape pod — then breach the GFS Sardine for 10 more floors of pure chaos.
+  </p>
+  <div class="ships-grid">
+    <div class="ship-card ship-anchovy">
+      <div class="ship-code">GFS-001</div>
+      <div class="ship-name">GFS Anchovy</div>
+      <div class="ship-floors">Floors 1–10</div>
+      <p class="ship-desc">The starting vessel. Standard grid layouts with increasing enemy density. Collect floor dots, grab KEY tiles to unlock portals, and fight your way to the top.</p>
+      <ul class="ship-feature-list">
+        <li>Classic rectangular floor layouts</li>
+        <li>Escalating droid power (100→999)</li>
+        <li>NEON ⬡ dots refuel your power core</li>
+        <li>Floor 10: Escape Pod portal to Sardine</li>
+      </ul>
+    </div>
+    <div class="ship-card ship-sardine">
+      <div class="ship-code">GFS-002</div>
+      <div class="ship-name">GFS Sardine</div>
+      <div class="ship-floors">Floors 11–20</div>
+      <p class="ship-desc">The Sardine's donut-shaped floor architecture hides a deadly secret — black hole mechanics that warp droid movement. Only the highest-power override survives.</p>
+      <ul class="ship-feature-list">
+        <li>Donut-ring floor topology</li>
+        <li>Black hole gravity mechanics</li>
+        <li>Hostile elite droids (700+ power)</li>
+        <li>Floor 20: Final override for glory</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- TERMINAL STRIP -->
+
+<div class="terminal-strip">
+  <span class="terminal-text">
+    ▸ SECURITY BREACH DETECTED &nbsp;·&nbsp; DROID OVERRIDE IN PROGRESS &nbsp;·&nbsp; GFS ANCHOVY DECKS 1–10 COMPROMISED &nbsp;·&nbsp; ESCAPE POD LAUNCHED &nbsp;·&nbsp; GFS SARDINE HULL BREACH &nbsp;·&nbsp; ALL PERSONNEL REPORT TO COMBAT STATIONS &nbsp;·&nbsp; PARADROID TRIBUTE © 1985 ANDREW BRAYBROOK &nbsp;·&nbsp;
+  </span>
+</div>
+
+<!-- HOW TO PLAY -->
+
+<section id="howtoplay">
+  <div class="section-label">▸ Mission Briefing</div>
+  <h2 class="section-title">How to <em>Play</em></h2>
+  <div class="rules-grid">
+    <div class="rule-card">
+      <span class="rule-icon">🕹️</span>
+      <div class="rule-title">Move</div>
+      <p class="rule-desc">Use the on-screen joystick below the game viewport to pilot your droid across each floor.</p>
+    </div>
+    <div class="rule-card">
+      <span class="rule-icon">⚔️</span>
+      <div class="rule-title">Combat</div>
+      <p class="rule-desc">Collide with enemy droids to engage. <strong>Higher PWR wins.</strong> Defeated droids drop power boosts.</p>
+    </div>
+    <div class="rule-card">
+      <span class="rule-icon">●</span>
+      <div class="rule-title">Dots</div>
+      <p class="rule-desc">Eat green floor dots to score points. Clear a floor to maximise your score multiplier.</p>
+    </div>
+    <div class="rule-card">
+      <span class="rule-icon">⬡</span>
+      <div class="rule-title">NEON Fuel</div>
+      <p class="rule-desc">Yellow NEON hexagon dots refuel your power core by +5 PWR. Keep topped up for harder droids.</p>
+    </div>
+    <div class="rule-card">
+      <span class="rule-icon">🔑</span>
+      <div class="rule-title">KEY Tiles</div>
+      <p class="rule-desc">Step on a cyan KEY tile to unlock the portal door on that floor. No key — no exit.</p>
+    </div>
+    <div class="rule-card">
+      <span class="rule-icon">🚀</span>
+      <div class="rule-title">Escape</div>
+      <p class="rule-desc">Reach the ESCAPE POD on floor 10 to board the GFS Sardine. Survive all 20 floors to win.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PRIVACY -->
+
+<section id="privacy">
+  <div class="section-label">▸ Legal Clearance</div>
+  <h2 class="section-title">Privacy <em>Policy</em></h2>
+  <div class="legal-box">
+    <p><em>Effective date: 2025. Last updated: March 2026.</em></p>
+
+```
+<h3>Data We Collect</h3>
+<p>PIRATEDROIDZ does not collect, store, or transmit any personal data. The game runs entirely offline on your device.</p>
+<ul>
+  <li>No account registration required</li>
+  <li>No analytics or tracking SDKs</li>
+  <li>No advertising networks</li>
+  <li>No data shared with third parties</li>
+</ul>
+
+<h3>Local Storage</h3>
+<p>Your high score and game progress are saved locally on your device only, using standard iOS local storage. This data never leaves your device.</p>
+
+<h3>Children's Privacy</h3>
+<p>PIRATEDROIDZ does not collect any information from anyone, including children under the age of 13. The game is suitable for all ages.</p>
+
+<h3>Changes to This Policy</h3>
+<p>If this policy changes, we will update the effective date above. Continued use of the app constitutes acceptance of any updated policy.</p>
+
+<h3>Contact</h3>
+<p>Questions? Reach us via the <a href="#support">support links below</a> or open an issue on our <a href="https://github.com/EconMrLong/piratedroidz" target="_blank" rel="noopener">GitHub repository</a>.</p>
+```
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SUPPORT -->
+
+<section id="support">
+  <div class="section-label">▸ Command Channel</div>
+  <h2 class="section-title">Support &amp; <em>Contact</em></h2>
+  <p style="font-size:0.85rem;color:rgba(204,232,239,0.5);line-height:1.8;max-width:500px;margin:0 auto">
+    Encountered a rogue droid? Found a bug? Open a GitHub issue or reach out directly.
+  </p>
+  <div class="support-box">
+    <a href="https://github.com/EconMrLong/piratedroidz/issues" class="support-link" target="_blank" rel="noopener">
+      <span class="link-icon">🐛</span>
+      <div>
+        <span class="link-label">Bug Reports &amp; Issues</span>
+        github.com/EconMrLong/piratedroidz/issues
+      </div>
+    </a>
+    <a href="https://github.com/EconMrLong/piratedroidz" class="support-link" target="_blank" rel="noopener">
+      <span class="link-icon">📦</span>
+      <div>
+        <span class="link-label">Source Repository</span>
+        github.com/EconMrLong/piratedroidz
+      </div>
+    </a>
+    <a href="https://twitter.com/EconMrLong" class="support-link" target="_blank" rel="noopener">
+      <span class="link-icon">📡</span>
+      <div>
+        <span class="link-label">Developer</span>
+        @EconMrLong
+      </div>
+    </a>
+    <a href="https://apps.apple.com/app/id6744275965" class="support-link" target="_blank" rel="noopener">
+      <span class="link-icon">⭐</span>
+      <div>
+        <span class="link-label">Leave a Review</span>
+        App Store · PIRATEDROIDZ
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+
+<footer>
+  <div class="footer-logo">PIRATE<span style="color:#fff">DROIDZ</span></div>
+  <p>Droid Core v3.0 &nbsp;·&nbsp; GFS Anchovy &amp; GFS Sardine</p>
+  <p>A tribute to <strong>Paradroid</strong> © 1985 Andrew Braybrook / Hewson Consultants</p>
+  <p style="margin-top:1rem">
+    <a href="#privacy">Privacy Policy</a> &nbsp;·&nbsp;
+    <a href="#support">Support</a> &nbsp;·&nbsp;
+    <a href="https://github.com/EconMrLong/piratedroidz" target="_blank" rel="noopener">GitHub</a>
+  </p>
+  <p style="margin-top:0.75rem">Made with ♥ by <a href="https://twitter.com/EconMrLong" target="_blank" rel="noopener">EconMrLong</a></p>
+</footer>
+
+</body>
+</html>
